@@ -1,6 +1,23 @@
 #!/usr/bin/env python
+import shutil
 import sys
 import os
+
+
+def usage():
+    print('''usage: pytgrep [-c <depth> | -cl | -f] (optional) pattern file
+
+file should be python script formatted with pep8 guidelines
+
+optional arguments:
+-h          show this page
+-c [depth]  show context of the string. depth is maximum intendation level (1 if not specified)
+-cl         show class containing string (ignored if no class)
+-f          show function containing string (ignored if no function)
+
+Note: only one option can be specified at a time.
+''')
+
 
 class Args:
 
@@ -14,12 +31,13 @@ class Args:
         self.args = self.parseargs(args)
 
     def parseargs(self, args):
-        print(args)
         for arg in args:
             arg = args[0]
             if arg == '-cl':
                 self.cl = True
                 args.remove(arg)
+            elif arg == '-h':
+                return 1
             elif arg == '-c':
                 self.context = True
                 if arg != args[-1] and args[args.index(arg)+1].isdigit():
@@ -57,14 +75,27 @@ class Args:
             return 1
         return 0
 
+
+def parse(args):
+    results = []
+    if True is False:
+        pass
+    else:
+        with open(args.path) as f:
+            for num, line in enumerate(f, 1):
+                if args.pattern in line:
+                    results.append(str(num)+line)
+        return ('\n' + '='*shutil.get_terminal_size()[0]+ '\n').join(results)
+
+
+
 def main():
     args = Args(sys.argv[1:])
     if args.args == 1:
-        print('USAGE')
+        usage()
         sys.exit(1)
     else:
-        print(args.args)
-        print('LETS GO!')
+        print(parse(args))
 
 
 if __name__ == '__main__':
