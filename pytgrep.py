@@ -16,10 +16,12 @@ class Args:
     def parseargs(self, args):
         print(args)
         for arg in args:
+            arg = args[0]
             if arg == '-cl':
                 self.cl = True
                 args.remove(arg)
             elif arg == '-c':
+                self.context = True
                 if arg != args[-1] and args[args.index(arg)+1].isdigit():
                     self.depth = int(args[args.index(arg)+1])
                     args.remove(args[args.index(arg)+1])
@@ -47,7 +49,11 @@ class Args:
             print('Error: there is no search pattern')
             return 1
         if len(args) != 0:
-            print('USAGE!')
+            for arg in args:
+                print('{} is not recognized option'.format(arg))
+            return 1
+        if len([arg for arg in [self.cl, self.func, self.context] if arg is True]) > 1:
+            print('Error: Only one option from -cl -c or -f can be used at a time')
             return 1
         return 0
 
