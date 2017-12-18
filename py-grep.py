@@ -1,22 +1,46 @@
 #!/usr/bin/env python
+from pygments.lexers.python import PythonLexer
+from pygments import highlight
+from pygments.formatters.terminal import TerminalFormatter
 import shutil
+import codegen
 import sys
 import os
 
 
 def usage():
-    print('''usage: pytgrep [-c <depth> | -cl | -f] (optional) pattern file
+    print('''
+usage: pytgrep [-c <depth> | -cl | -f] (optional) pattern file
 
 file should be python script formatted with pep8 guidelines
 
 optional arguments:
 -h          show this page
--c [depth]  show context of the string. depth is maximum intendation level (1 if not specified)
+-c [depth]  show context of the string.
 -cl         show class containing string (ignored if no class)
 -f          show function containing string (ignored if no function)
 
 Note: only one option can be specified at a time.
 ''')
+
+
+def get_numlines(node):
+    return len(codegen.to_source(node).split('\n'))
+
+
+def mhighlight(num, string, pattern):
+    return ('\033[1;90m{:0>2}\033[0;0m {}\033[1;91m{}\033[0;0m{}'.format(
+        num,
+        highlight(
+            string.split(pattern)[0],
+            PythonLexer(),
+            TerminalFormatter()).strip('\n'),
+        pattern.strip('\n'),
+        highlight(
+            string.split(pattern)[1],
+            PythonLexer(),
+            TerminalFormatter()).lstrip('\n')
+    ))
 
 
 class Args:
@@ -55,7 +79,7 @@ class Args:
         elif not args[-1].endswith('.py'):
             with open(args[-1]) as f:
                 line = f.readline(0)
-                if not '#!' in line and not 'python' in line:
+                if '#!' not in line and 'python' not in line:
                     print('Error: {} is not a python script'.format(args[-1]))
                     return 1
         self.path = args[-1]
@@ -70,23 +94,36 @@ class Args:
             for arg in args:
                 print('{} is not recognized option'.format(arg))
             return 1
-        if len([arg for arg in [self.cl, self.func, self.context] if arg is True]) > 1:
-            print('Error: Only one option from -cl -c or -f can be used at a time')
+        if len(
+            [arg for arg in [self.cl, self.func, self.context] if arg is True]
+        ) > 1:
+            print('Error: Only one of -cl, -c, -f can be used at a time')
             return 1
         return 0
 
 
 def parse(args):
     results = []
-    if True is False:
+    if args.context:
+        # results = context_parse(args)
         pass
     else:
         with open(args.path) as f:
+            ln = 0
+            curres = ''
             for num, line in enumerate(f, 1):
                 if args.pattern in line:
-                    results.append(str(num)+line)
-        return ('\n' + '='*shutil.get_terminal_size()[0]+ '\n').join(results)
-
+                    a = mhighlight(num, line, args.pattern)
+                    if num == ln + 1:
+                        curres += a
+                    else:
+                        results.append(curres)
+                        curres = a
+                    ln = num
+            results.append(curres)
+    return ('\n\033[1;90m'
+            + '='*shutil.get_terminal_size()[0]
+            + '\033[0;0m\n\n').join(results)
 
 
 def main():
