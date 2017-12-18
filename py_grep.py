@@ -26,20 +26,20 @@ Note: only one option can be specified at a time.
 
 
 def get_numlines(node):
-    return len(codegen.to_source(node).split('\n'))
+    return len(codegen.to_source(node).splitlines())
 
 
 def mhighlight(num, string, pattern):
     if pattern == '':
-        return ('\033[1;90m{:0>2}\033[0;0m'.format(
+        return ('\033[1;90m{:0>2}\033[0;0m {}\n'.format(
             num,
             highlight(
-                string.split(pattern)[0],
+                string,
                 PythonLexer(),
                 TerminalFormatter()).strip('\n'),
             ))
     else:
-        return ('\033[1;90m{:0>2}\033[0;0m {}\033[1;91m{}\033[0;0m{}'.format(
+        return ('\033[1;90m{:0>2}\033[0;0m {}\033[1;91m{}\033[0;0m{}\n'.format(
             num,
             highlight(
                 string.split(pattern)[0],
@@ -47,9 +47,9 @@ def mhighlight(num, string, pattern):
                 TerminalFormatter()).strip('\n'),
             pattern.strip('\n'),
             highlight(
-                string.split(pattern)[1],
+                string.split(pattern, 1)[1],
                 PythonLexer(),
-                TerminalFormatter()).lstrip('\n')
+                TerminalFormatter()).strip('\n')
             ))
 
 
@@ -123,8 +123,9 @@ def find_match_node(results, num, root, args):
 
 def get_end(node):
     ints = []
+    ints.append(node.lineno)
     for child in ast.walk(node):
-        for ch in ast.iter_child_nodes(node):
+        for ch in ast.iter_child_nodes(child):
             if hasattr(ch, 'lineno'):
                 ints.append(ch.lineno)
     return max(ints)
@@ -134,17 +135,14 @@ def context_parse(args):
     with open(args.path) as f:
         content = f.read()
     results = []
+    added_lines = []
     root = ast.parse(content)
     for node in ast.walk(root):
         for child in ast.iter_child_nodes(node):
             child.parent = node
     # search for pattern
-    for num, line in enumerate(content.split('\n'), 1):
-        if args.pattern in line and line not in [
-            item for sublist in [
-                it.split('\n') for it in results
-            ] for item in sublist
-        ]:
+    for num, line in enumerate(content.splitlines(), 1):
+        if args.pattern in line and line not in added_lines:
             pattern_node = find_match_node(results, num, root, args)
             top_root = False
             if pattern_node.parent is root:
@@ -157,10 +155,111 @@ def context_parse(args):
                         break
             first = pattern_node.lineno
             end = get_end(pattern_node)
+            curres = []
             if top_root is True:
                 if pattern_node is not root.body[0]:
                     top = root.body[root.body.index(pattern_node)-1]
-                # if pattern_node
+                    first_top = top.lineno
+                    end_top = get_end(top)
+                    print(first_top, end_top)
+                    if end_top - first_top < 2:
+                        curres += [
+                            mhighlight(
+                                num,
+                                line,
+                                args.pattern) if args.pattern in line else
+                            mhighlight(
+                                num,
+                                line,
+                                ''
+                            ) for num, line in
+                            enumerate(
+                                content.splitlines()[
+                                    first_top-1:end_top], first_top)
+                        ]
+                        added_lines += content.splitlines()[
+                            first_top-1:end_top]
+                        first = end_top+1
+                    else:
+                        curres += [('\033[1;90m{:0>2}'
+                                    + ' +--{} lines: {}---\033[0;0m\n').format(
+                            first_top,
+                            end_top - first_top,
+                            content.splitlines()[first_top-1]
+                        )]
+                        first = end_top+1
+                curres += [
+                    mhighlight(
+                        num,
+                        line,
+                        args.pattern) if args.pattern in line else
+                    mhighlight(
+                        num,
+                        line,
+                        ''
+                    ) for num, line in
+                    enumerate(content.splitlines()[first-1:end], first)
+                ]
+                added_lines += content.splitlines()[first-1:end]
+                if pattern_node is not root.body[-1]:
+                    bottom = root.body[root.body.index(pattern_node)+1]
+                    first_bottom = bottom.lineno
+                    if first_bottom - end > 0:
+                        curres += [
+                            mhighlight(
+                                num,
+                                line,
+                                args.pattern) if args.pattern in line else
+                            mhighlight(
+                                num,
+                                line,
+                                ''
+                            ) for num, line in
+                            enumerate(content.splitlines()[
+                                end-1:first_bottom-1], end)
+                        ]
+                        added_lines += content.splitlines()[
+                            end-1:first_bottom-1]
+                    end_bottom = get_end(bottom)
+                    if end_bottom - first_bottom < 3:
+                        curres += [
+                            mhighlight(
+                                num,
+                                line,
+                                args.pattern) if args.pattern in line else
+                            mhighlight(
+                                num,
+                                line,
+                                ''
+                            ) for num, line in
+                            enumerate(content.splitlines()[
+                                first_bottom-1:end_bottom], first_bottom)
+                        ]
+                        added_lines += content.splitlines()[
+                            first_bottom-1:end_bottom]
+                    else:
+                        curres += [('\033[1;90m{:0>2}'
+                                    + ' +--{} lines: {}---\033[0;0m\n').format(
+                            first_bottom,
+                            end_bottom - first_bottom,
+                            content.splitlines()[first_bottom-1]
+                        )]
+            else:
+                curres += [
+                    mhighlight(
+                        num,
+                        line,
+                        args.pattern) if args.pattern in line else
+                    mhighlight(
+                        num,
+                        line,
+                        ''
+                    ) for num, line in
+                    enumerate(content.splitlines()[first-1:end], first)
+                ]
+                added_lines += content.splitlines()[first-1:end]
+            results.append(''.join(curres))
+    return results
 
 
 def parse(args):
@@ -192,7 +291,7 @@ def main():
         usage()
         sys.exit(1)
     else:
-        print(parse(args))
+        print('\n' + parse(args))
 
 
 if __name__ == '__main__':
