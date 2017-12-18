@@ -3,6 +3,7 @@ from pygments.lexers.python import PythonLexer
 from pygments import highlight
 from pygments.formatters.terminal import TerminalFormatter
 import shutil
+import ast
 import codegen
 import sys
 import os
@@ -29,18 +30,27 @@ def get_numlines(node):
 
 
 def mhighlight(num, string, pattern):
-    return ('\033[1;90m{:0>2}\033[0;0m {}\033[1;91m{}\033[0;0m{}'.format(
-        num,
-        highlight(
-            string.split(pattern)[0],
-            PythonLexer(),
-            TerminalFormatter()).strip('\n'),
-        pattern.strip('\n'),
-        highlight(
-            string.split(pattern)[1],
-            PythonLexer(),
-            TerminalFormatter()).lstrip('\n')
-    ))
+    if pattern == '':
+        return ('\033[1;90m{:0>2}\033[0;0m'.format(
+            num,
+            highlight(
+                string.split(pattern)[0],
+                PythonLexer(),
+                TerminalFormatter()).strip('\n'),
+            ))
+    else:
+        return ('\033[1;90m{:0>2}\033[0;0m {}\033[1;91m{}\033[0;0m{}'.format(
+            num,
+            highlight(
+                string.split(pattern)[0],
+                PythonLexer(),
+                TerminalFormatter()).strip('\n'),
+            pattern.strip('\n'),
+            highlight(
+                string.split(pattern)[1],
+                PythonLexer(),
+                TerminalFormatter()).lstrip('\n')
+            ))
 
 
 class Args:
@@ -102,11 +112,61 @@ class Args:
         return 0
 
 
+def find_match_node(results, num, root, args):
+    for node in ast.walk(root):
+        for child in ast.iter_child_nodes(node):
+            if args.pattern in codegen.to_source(child) and \
+               hasattr(child, 'lineno') and \
+               child.lineno == num:
+                return child
+
+
+def get_end(node):
+    ints = []
+    for child in ast.walk(node):
+        for ch in ast.iter_child_nodes(node):
+            if hasattr(ch, 'lineno'):
+                ints.append(ch.lineno)
+    return max(ints)
+
+
+def context_parse(args):
+    with open(args.path) as f:
+        content = f.read()
+    results = []
+    root = ast.parse(content)
+    for node in ast.walk(root):
+        for child in ast.iter_child_nodes(node):
+            child.parent = node
+    # search for pattern
+    for num, line in enumerate(content.split('\n'), 1):
+        if args.pattern in line and line not in [
+            item for sublist in [
+                it.split('\n') for it in results
+            ] for item in sublist
+        ]:
+            pattern_node = find_match_node(results, num, root, args)
+            top_root = False
+            if pattern_node.parent is root:
+                top_root = True
+            else:
+                for i in range(args.depth):
+                    pattern_node = pattern_node.parent
+                    if pattern_node.parent is root:
+                        top_root = True
+                        break
+            first = pattern_node.lineno
+            end = get_end(pattern_node)
+            if top_root is True:
+                if pattern_node is not root.body[0]:
+                    top = root.body[root.body.index(pattern_node)-1]
+                # if pattern_node
+
+
 def parse(args):
     results = []
     if args.context:
-        # results = context_parse(args)
-        pass
+        results = context_parse(args)
     else:
         with open(args.path) as f:
             ln = 0
