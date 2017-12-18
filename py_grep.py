@@ -161,8 +161,7 @@ def context_parse(args):
                     top = root.body[root.body.index(pattern_node)-1]
                     first_top = top.lineno
                     end_top = get_end(top)
-                    print(first_top, end_top)
-                    if end_top - first_top < 2:
+                    if end_top - first_top < 3:
                         curres += [
                             mhighlight(
                                 num,
@@ -204,7 +203,7 @@ def context_parse(args):
                 if pattern_node is not root.body[-1]:
                     bottom = root.body[root.body.index(pattern_node)+1]
                     first_bottom = bottom.lineno
-                    if first_bottom - end > 0:
+                    if first_bottom - end > 1:
                         curres += [
                             mhighlight(
                                 num,
@@ -216,10 +215,10 @@ def context_parse(args):
                                 ''
                             ) for num, line in
                             enumerate(content.splitlines()[
-                                end-1:first_bottom-1], end)
+                                end:first_bottom-1], end)
                         ]
                         added_lines += content.splitlines()[
-                            end-1:first_bottom-1]
+                            end:first_bottom]
                     end_bottom = get_end(bottom)
                     if end_bottom - first_bottom < 3:
                         curres += [
