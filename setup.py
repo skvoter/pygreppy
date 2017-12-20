@@ -20,10 +20,10 @@ setup(name='pygreppy',
       author_email='skvoter46@gmail.com',
       license='BSD',
       packages=['pygreppy'],
-      install_requirements=[
+      install_requires=[
           'pygments',
-          'codegen',
-          'flake8'
+          'flake8',
+          'codegen'
       ],
       entry_points={
           'console_scripts': ['pygreppy=pygreppy.pygreppy:main'],

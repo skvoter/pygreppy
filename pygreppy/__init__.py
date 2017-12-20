@@ -142,6 +142,8 @@ def context_parse(args):
     for num, line in enumerate(content.splitlines(), 1):
         if args.pattern in line and line not in added_lines:
             pattern_node = find_match_node(results, num, root, args)
+            if pattern_node is None:
+                continue
             top_root = False
             if pattern_node.parent is root:
                 top_root = True
