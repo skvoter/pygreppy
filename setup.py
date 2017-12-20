@@ -1,12 +1,14 @@
 from setuptools import setup
 
+
 def readme():
     with open('README.rst') as f:
         return f.read()
 
+
 setup(name='pygreppy',
       version='0.1.0',
-      description='Tool for searching in python source code files that supports context output.',
+      description='Tool for searching in python source code',
       long_description=readme(),
       classifiers=[
         'Development Status :: 4 - Alpha',
@@ -28,6 +30,8 @@ setup(name='pygreppy',
       entry_points={
           'console_scripts': ['pygreppy=pygreppy.pygreppy:main'],
       },
-      dependency_links=['https://github.com/CensoredUsername/codegen#egg=codegen'],
+      dependency_links=[
+          'https://github.com/CensoredUsername/codegen#egg=codegen'
+      ],
       include_package_data=True,
       zip_safe=False)
