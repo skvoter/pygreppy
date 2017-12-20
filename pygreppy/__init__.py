@@ -1,11 +1,9 @@
-#!/usr/bin/env python
 from pygments.lexers.python import PythonLexer
 from pygments import highlight
 from pygments.formatters.terminal import TerminalFormatter
 import shutil
 import ast
 import codegen
-import sys
 import os
 
 
@@ -284,14 +282,4 @@ def parse(args):
             + '\033[0;0m\n\n').join(results)
 
 
-def main():
-    args = Args(sys.argv[1:])
-    if args.args == 1:
-        usage()
-        sys.exit(1)
-    else:
-        print('\n' + parse(args))
 
-
-if __name__ == '__main__':
-    main()
