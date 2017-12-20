@@ -13,7 +13,7 @@ Context searching is available with `ast` moldule and [CensoredUsername](https:/
 
 ## Usage:
 ```
-pygreppy [-c <depth> | -cl | -f] (optional) pattern file
+pygreppy [-c <depth>] (optional) pattern file
 
 file should be python script (better if formatted with pep8 guidelines)
 
