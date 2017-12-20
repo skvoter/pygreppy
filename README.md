@@ -7,11 +7,11 @@ Context searching is available with `ast` moldule and [CensoredUsername](https:/
 - [this `codegen` fork](https://github.com/CensoredUsername/codegen)
 - `pygments`
 ## Installation:
-> Soon it will be available on pip
+> Soon it will be available on pip (as py_grep)
 
 ## Usage:
 ```
-pytgrep [-c <depth> | -cl | -f] (optional) pattern file
+pygrep [-c <depth> | -cl | -f] (optional) pattern file
 
 file should be python script formatted with pep8 guidelines
 
