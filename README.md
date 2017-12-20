@@ -9,7 +9,7 @@ Context searching is available with `ast` moldule and [CensoredUsername](https:/
 - `pygments`
 
 ## Installation:
-> pip install --process-dependency-links pygreppy
+`pip install --process-dependency-links pygreppy`
 
 ## Usage:
 ```
