@@ -20,6 +20,7 @@ file should be python script (better if formatted with pep8 guidelines)
 optional arguments:
 -h          show this page
 -c [depth]  show context of the string.
+# soon will be added
 -cl         show class containing string (ignored if no class)
 -f          show function containing string (ignored if no function)
 
