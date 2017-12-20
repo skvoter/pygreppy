@@ -1,4 +1,4 @@
-# pygreppy
+# pygreppy [![Build Status](https://travis-ci.org/skvoter/pygreppy.svg?branch=master)](https://travis-ci.org/skvoter/pygreppy)
 Tool for searching in python source code files that supports context output.
 
 Context searching is available with `ast` moldule and [CensoredUsername](https://github.com/CensoredUsername/)'s [fork](https://github.com/CensoredUsername/codegen) of `codegen` by Armin Ronacher.
