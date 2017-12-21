@@ -5,22 +5,19 @@ Context searching is available with `ast` moldule and [CensoredUsername](https:/
 
 ## Requirements:
 - Python 3.x
-- [this `codegen` fork](https://github.com/CensoredUsername/codegen)
-- `pygments`
 
 ## Installation:
-`pip install --process-dependency-links pygreppy`
+`pip install pygreppy`
 
 ## Usage:
 ```
-pygreppy [-c <depth>] (optional) pattern file
+pygreppy [-c <depth> | cl | func] (optional) pattern file
 
 file should be python script (better if formatted with pep8 guidelines)
 
 optional arguments:
 -h          show this page
 -c [depth]  show context of the string.
-# soon will be added
 -cl         show class containing string (ignored if no class)
 -f          show function containing string (ignored if no function)
 
