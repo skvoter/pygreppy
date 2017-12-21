@@ -3,7 +3,7 @@ from pygments import highlight
 from pygments.formatters.terminal import TerminalFormatter
 import shutil
 import ast
-import codegen
+from . import codegen
 import os
 
 
