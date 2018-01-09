@@ -148,9 +148,6 @@ def class_parse(args):
             pattern_node = find_match_node(results, num, root, args)
             if pattern_node is None:
                 continue
-            top_root = False
-            if pattern_node.parent is root:
-                top_root = True
             else:
                 while objsearch not in str(pattern_node):
                     pattern_node = pattern_node.parent
@@ -334,6 +331,3 @@ def parse(args):
     return ('\n\033[1;90m'
             + '='*shutil.get_terminal_size()[0]
             + '\033[0;0m\n\n').join(results)
-
-
-
