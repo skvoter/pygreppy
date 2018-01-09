@@ -75,6 +75,7 @@ class Args:
             if arg == '-cl':
                 self.cl = True
                 args.remove(arg)
+                print('removed cl')
             elif arg == '-h':
                 return 1
             elif arg == '-c':
@@ -106,6 +107,7 @@ class Args:
             print('Error: there is no search pattern')
             return 1
         if len(args) != 0:
+            print(args)
             for arg in args:
                 print('{} is not recognized option'.format(arg))
             return 1
@@ -122,7 +124,7 @@ def find_match_node(results, num, root, args):
         for child in ast.iter_child_nodes(node):
             if args.regexp:
                 pattern = re.compile(args.pattern)
-                if pattern.match(codegen.to_source(child)) and \
+                if pattern.search(codegen.to_source(child)) and \
                    hasattr(child, 'lineno') and \
                    child.lineno == num:
                     return child
@@ -158,7 +160,9 @@ def class_parse(args):
             child.parent = node
     # search for pattern
     for num, line in enumerate(content.splitlines(), 1):
-        if args.pattern in line and line not in added_lines:
+        if (args.pattern in line or (
+            args.regexp and re.search(args.pattern, line)
+        )) and line not in added_lines:
             pattern_node = find_match_node(results, num, root, args)
             if pattern_node is None:
                 continue
@@ -173,6 +177,7 @@ def class_parse(args):
             if objsearch in str(pattern_node):
                 first = pattern_node.lineno
                 end = get_end(pattern_node)
+
                 curres += [
                     mhighlight(
                         num,
@@ -201,7 +206,9 @@ def context_parse(args):
             child.parent = node
     # search for pattern
     for num, line in enumerate(content.splitlines(), 1):
-        if args.pattern in line and line not in added_lines:
+        if (args.pattern in line or (
+            args.regexp and re.search(args.pattern, line)
+        )) and line not in added_lines:
             pattern_node = find_match_node(results, num, root, args)
             if pattern_node is None:
                 continue
@@ -333,8 +340,13 @@ def parse(args):
             ln = 0
             curres = ''
             for num, line in enumerate(f, 1):
-                if args.pattern in line:
-                    a = mhighlight(num, line, args.pattern)
+                if args.pattern in line or (
+                    re.search(args.pattern, line) and args.regexp
+                ):
+                    if args.regexp:
+                        a = mhighlight(num, line, '')
+                    else:
+                        a = mhighlight(num, line, args.pattern)
                     if num == ln + 1:
                         curres += a
                     else:
