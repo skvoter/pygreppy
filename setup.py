@@ -28,7 +28,7 @@ setup(name='pygreppy',
           'flake8',
       ],
       entry_points={
-          'console_scripts': ['pygreppy=pygreppy.pygreppy:main'],
+          'console_scripts': ['pygreppy=pygreppy.pygreppymain:main'],
       },
       include_package_data=True,
       zip_safe=False)

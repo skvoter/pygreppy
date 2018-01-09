@@ -1,5 +1,6 @@
 import sys
-from . import Args, parse, usage
+from pygreppy import Args, parse, usage
+
 
 def main():
     args = Args(sys.argv[1:])

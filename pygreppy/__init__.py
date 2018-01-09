@@ -130,6 +130,10 @@ def get_end(node):
 
 
 def class_parse(args):
+    if args.cl:
+        objsearch = 'ClassDef'
+    elif args.func:
+        objsearch = 'FunctionDef'
     with open(args.path) as f:
         content = f.read()
     results = []
@@ -144,18 +148,15 @@ def class_parse(args):
             pattern_node = find_match_node(results, num, root, args)
             if pattern_node is None:
                 continue
-            top_root = False
-            if pattern_node.parent is root:
-                top_root = True
             else:
-                while 'ClassDef' not in str(pattern_node):
+                while objsearch not in str(pattern_node):
                     pattern_node = pattern_node.parent
                     if pattern_node.parent is root:
                         break
             # first = pattern_node.lineno
             # end = get_end(pattern_node)
             curres = []
-            if 'ClassDef' in str(pattern_node):
+            if objsearch in str(pattern_node):
                 first = pattern_node.lineno
                 end = get_end(pattern_node)
                 curres += [
@@ -309,10 +310,8 @@ def context_parse(args):
 
 def parse(args):
     results = []
-    if args.cl:
+    if args.cl or args.func:
         results = class_parse(args)
-#     if args.func:
-#         results = func_parse(args)
     elif args.context:
         results = context_parse(args)
     else:
@@ -332,6 +331,3 @@ def parse(args):
     return ('\n\033[1;90m'
             + '='*shutil.get_terminal_size()[0]
             + '\033[0;0m\n\n').join(results)
-
-
-
