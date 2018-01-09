@@ -230,20 +230,32 @@ def context_parse(args):
                     first_top = top.lineno
                     end_top = get_end(top)
                     if end_top - first_top < 3:
-                        curres += [
-                            mhighlight(
-                                num,
-                                line,
-                                args.pattern) if args.pattern in line else
-                            mhighlight(
-                                num,
-                                line,
-                                ''
-                            ) for num, line in
-                            enumerate(
-                                content.splitlines()[
-                                    first_top-1:end_top], first_top)
-                        ]
+                        if args.regexp:
+                            curres += [
+                                mhighlight(
+                                    num,
+                                    line,
+                                    ''
+                                ) for num, line in
+                                enumerate(
+                                    content.splitlines()[
+                                        first_top-1:end_top], first_top)
+                            ]
+                        else:
+                            curres += [
+                                mhighlight(
+                                    num,
+                                    line,
+                                    args.pattern) if args.pattern in line else
+                                mhighlight(
+                                    num,
+                                    line,
+                                    ''
+                                ) for num, line in
+                                enumerate(
+                                    content.splitlines()[
+                                        first_top-1:end_top], first_top)
+                            ]
                         added_lines += content.splitlines()[
                             first_top-1:end_top]
                         first = end_top+1
@@ -255,53 +267,84 @@ def context_parse(args):
                             content.splitlines()[first_top-1]
                         )]
                         first = end_top+1
-                curres += [
-                    mhighlight(
-                        num,
-                        line,
-                        args.pattern) if args.pattern in line else
-                    mhighlight(
-                        num,
-                        line,
-                        ''
-                    ) for num, line in
-                    enumerate(content.splitlines()[first-1:end], first)
-                ]
+                if args.regexp:
+                    curres += [
+                        mhighlight(
+                            num,
+                            line,
+                            ''
+                        ) for num, line in
+                        enumerate(content.splitlines()[first-1:end], first)
+                    ]
+                else:
+                    curres += [
+                        mhighlight(
+                            num,
+                            line,
+                            args.pattern) if args.pattern in line else
+                        mhighlight(
+                            num,
+                            line,
+                            ''
+                        ) for num, line in
+                        enumerate(content.splitlines()[first-1:end], first)
+                    ]
                 added_lines += content.splitlines()[first-1:end]
                 if pattern_node is not root.body[-1]:
                     bottom = root.body[root.body.index(pattern_node)+1]
                     first_bottom = bottom.lineno
                     if first_bottom - end > 1:
-                        curres += [
-                            mhighlight(
-                                num,
-                                line,
-                                args.pattern) if args.pattern in line else
-                            mhighlight(
-                                num,
-                                line,
-                                ''
-                            ) for num, line in
-                            enumerate(content.splitlines()[
-                                end:first_bottom-1], end)
-                        ]
+                        if args.regexp:
+                            curres += [
+                                mhighlight(
+                                    num,
+                                    ''
+                                ) for num, line in
+                                enumerate(content.splitlines()[
+                                    end:first_bottom-1], end)
+                            ]
+                        else:
+                            curres += [
+                                mhighlight(
+                                    num,
+                                    line,
+                                    args.pattern) if args.pattern in line else
+                                mhighlight(
+                                    num,
+                                    line,
+                                    ''
+                                ) for num, line in
+                                enumerate(content.splitlines()[
+                                    end:first_bottom-1], end)
+                            ]
                         added_lines += content.splitlines()[
                             end:first_bottom]
                     end_bottom = get_end(bottom)
                     if end_bottom - first_bottom < 3:
-                        curres += [
-                            mhighlight(
-                                num,
-                                line,
-                                args.pattern) if args.pattern in line else
-                            mhighlight(
-                                num,
-                                line,
-                                ''
-                            ) for num, line in
-                            enumerate(content.splitlines()[
-                                first_bottom-1:end_bottom], first_bottom)
-                        ]
+                        if args.regexp:
+                            curres += [
+                                mhighlight(
+                                    num,
+                                    line,
+                                    ''
+                                ) for num, line in
+                                enumerate(content.splitlines()[
+                                    first_bottom-1:end_bottom], first_bottom)
+                            ]
+                        else:
+                            curres += [
+                                mhighlight(
+                                    num,
+                                    line,
+                                    args.pattern) if args.pattern in line else
+                                mhighlight(
+                                    num,
+                                    line,
+                                    ''
+                                ) for num, line in
+                                enumerate(content.splitlines()[
+                                    first_bottom-1:end_bottom], first_bottom)
+                            ]
                         added_lines += content.splitlines()[
                             first_bottom-1:end_bottom]
                     else:
@@ -312,18 +355,28 @@ def context_parse(args):
                             content.splitlines()[first_bottom-1]
                         )]
             else:
-                curres += [
-                    mhighlight(
-                        num,
-                        line,
-                        args.pattern) if args.pattern in line else
-                    mhighlight(
-                        num,
-                        line,
-                        ''
-                    ) for num, line in
-                    enumerate(content.splitlines()[first-1:end], first)
-                ]
+                if args.regexp:
+                    curres += [
+                        mhighlight(
+                            num,
+                            line,
+                            ''
+                        ) for num, line in
+                        enumerate(content.splitlines()[first-1:end], first)
+                    ]
+                else:
+                    curres += [
+                        mhighlight(
+                            num,
+                            line,
+                            args.pattern) if args.pattern in line else
+                        mhighlight(
+                            num,
+                            line,
+                            ''
+                        ) for num, line in
+                        enumerate(content.splitlines()[first-1:end], first)
+                    ]
                 added_lines += content.splitlines()[first-1:end]
             results.append(''.join(curres))
     return results
