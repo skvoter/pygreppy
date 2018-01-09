@@ -3,7 +3,7 @@ from pygments import highlight
 from pygments.formatters.terminal import TerminalFormatter
 import shutil
 import ast
-from . import codegen
+from pygreppy import codegen
 import os
 
 
@@ -127,6 +127,52 @@ def get_end(node):
             if hasattr(ch, 'lineno'):
                 ints.append(ch.lineno)
     return max(ints)
+
+
+def class_parse(args):
+    with open(args.path) as f:
+        content = f.read()
+    results = []
+    added_lines = []
+    root = ast.parse(content)
+    for node in ast.walk(root):
+        for child in ast.iter_child_nodes(node):
+            child.parent = node
+    # search for pattern
+    for num, line in enumerate(content.splitlines(), 1):
+        if args.pattern in line and line not in added_lines:
+            pattern_node = find_match_node(results, num, root, args)
+            if pattern_node is None:
+                continue
+            top_root = False
+            if pattern_node.parent is root:
+                top_root = True
+            else:
+                while 'ClassDef' not in str(pattern_node):
+                    pattern_node = pattern_node.parent
+                    if pattern_node.parent is root:
+                        break
+            # first = pattern_node.lineno
+            # end = get_end(pattern_node)
+            curres = []
+            if 'ClassDef' in str(pattern_node):
+                first = pattern_node.lineno
+                end = get_end(pattern_node)
+                curres += [
+                    mhighlight(
+                        num,
+                        line,
+                        args.pattern) if args.pattern in line else
+                    mhighlight(
+                        num,
+                        line,
+                        ''
+                    ) for num, line in
+                    enumerate(content.splitlines()[first-1:end], first)
+                ]
+                added_lines += content.splitlines()[first-1:end]
+            results.append(''.join(curres))
+    return results
 
 
 def context_parse(args):
@@ -263,7 +309,11 @@ def context_parse(args):
 
 def parse(args):
     results = []
-    if args.context:
+    if args.cl:
+        results = class_parse(args)
+#     if args.func:
+#         results = func_parse(args)
+    elif args.context:
         results = context_parse(args)
     else:
         with open(args.path) as f:

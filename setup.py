@@ -7,7 +7,7 @@ def readme():
 
 
 setup(name='pygreppy',
-      version='0.1.0',
+      version='0.1.3',
       description='Tool for searching in python source code',
       python_requires='>=3',
       long_description=readme(),
