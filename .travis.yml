@@ -7,4 +7,6 @@ install:
   - pipenv install
 
 script:
-  - flake8 *.py
+  - pyflakes *.py
+  - pyflakes pygreppy/__init__.py
+  - pyflakes pygreppy/pygreppy.py
