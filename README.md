@@ -1,4 +1,4 @@
-# pygreppy [![Build Status](https://travis-ci.org/skvoter/pygreppy.svg?branch=master)](https://travis-ci.org/skvoter/pygreppy) [![PyPI version](https://badge.fury.io/py/pygreppy.svg)](https://badge.fury.io/py/pygreppy)
+# pygreppy [![Build Status](https://travis-ci.org/skvoter/pygreppy.svg?branch=master)](https://travis-ci.org/skvoter/pygreppy) [![PyPI version](https://badge.fury.io/py/pygreppy.svg)](https://badge.fury.io/py/pygreppy) [![PyPI](https://img.shields.io/pypi/status/pygreppy.svg)](https://pypi.python.org/pypi/pygreppy/)
 Tool for searching in python source code files that supports context output.
 
 Context searching is available with `ast` module and [CensoredUsername](https://github.com/CensoredUsername/)'s [fork](https://github.com/CensoredUsername/codegen) of `codegen` by Armin Ronacher.
