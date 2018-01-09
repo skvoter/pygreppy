@@ -8,5 +8,4 @@ install:
 
 script:
   - pyflakes *.py
-  - pyflakes pygreppy/__init__.py
-  - pyflakes pygreppy/pygreppymain.py
+  - pyflakes pygreppy/core.py

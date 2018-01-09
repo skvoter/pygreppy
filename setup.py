@@ -7,7 +7,7 @@ def readme():
 
 
 setup(name='pygreppy',
-      version='0.1.3',
+      version='0.1.4',
       description='Tool for searching in python source code',
       python_requires='>=3',
       long_description=readme(),
@@ -28,7 +28,7 @@ setup(name='pygreppy',
           'flake8',
       ],
       entry_points={
-          'console_scripts': ['pygreppy=pygreppy.pygreppymain:main'],
+          'console_scripts': ['pygreppy=pygreppy.core:main'],
       },
       include_package_data=True,
       zip_safe=False)
