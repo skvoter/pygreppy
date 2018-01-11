@@ -6,7 +6,7 @@ import re
 import ast
 import sys
 import os
-import codegen
+from . import codegen
 
 
 def usage():
@@ -30,8 +30,8 @@ def get_numlines(node):
     return len(codegen.to_source(node).splitlines())
 
 
-def mhighlight(num, string, pattern):
-    if pattern == '':
+def mhighlight(num, string, pattern=None, regexp=False):
+    if not pattern:
         return ('\033[1;90m{:0>2}\033[0;0m {}\n'.format(
             num,
             highlight(
@@ -40,18 +40,34 @@ def mhighlight(num, string, pattern):
                 TerminalFormatter()).strip('\n'),
             ))
     else:
-        return ('\033[1;90m{:0>2}\033[0;0m {}\033[1;91m{}\033[0;0m{}\n'.format(
-            num,
-            highlight(
-                string.split(pattern)[0],
-                PythonLexer(),
-                TerminalFormatter()).strip('\n'),
-            pattern.strip('\n'),
-            highlight(
-                string.split(pattern, 1)[1],
-                PythonLexer(),
-                TerminalFormatter()).strip('\n')
-            ))
+        if not regexp:
+            resstring = '\033[1;90m{:0>2}\033[0;0m '.format(num)
+            splits = string.split(pattern)
+            for split in splits:
+                resstring += highlight(
+                    split, PythonLexer(), TerminalFormatter()
+                ).strip('\n')
+                if split != splits[-1]:
+                    resstring += '{}\033[1;91m{}\033[0;0m'.format(
+                        pattern.split('\n'))
+            return resstring
+        else:
+            resstring = '\033[1;90m{:0>2}\033[0;0m '.format(num)
+            patt = re.compile(pattern)
+            splits = patt.split(string)
+            found = patt.findall(string)
+            for i in range(len(found)):
+                resstring += highlight(
+                    splits[i], PythonLexer(), TerminalFormatter()
+                ).strip('\n')
+                resstring += '{}\033[1;91m{}\033[0;0m'.format(
+                    found[i].split('\n'))
+            resstring += highlight(
+                splits[-1], PythonLexer(), TerminalFormatter()
+            ).strip('\n')
+            return resstring
+
+
 
 
 class Args:
@@ -162,7 +178,7 @@ def class_parse(args):
     for num, line in enumerate(content.splitlines(), 1):
         if (args.pattern in line or (
             args.regexp and re.search(args.pattern, line)
-        )) and line not in added_lines:
+        )) and (num, line) not in added_lines:
             pattern_node = find_match_node(results, num, root, args)
             if pattern_node is None:
                 continue
@@ -171,22 +187,16 @@ def class_parse(args):
                     pattern_node = pattern_node.parent
                     if pattern_node.parent is root:
                         break
-            # first = pattern_node.lineno
-            # end = get_end(pattern_node)
             curres = []
             if objsearch in str(pattern_node):
                 first = pattern_node.lineno
                 end = get_end(pattern_node)
-
                 curres += [
                     mhighlight(
                         num,
                         line,
-                        args.pattern) if args.pattern in line else
-                    mhighlight(
-                        num,
-                        line,
-                        ''
+                        args.pattern,
+                        args.regexp
                     ) for num, line in
                     enumerate(content.splitlines()[first-1:end], first)
                 ]
