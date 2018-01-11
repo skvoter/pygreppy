@@ -1,5 +1,6 @@
 # pygreppy [![Build Status](https://travis-ci.org/skvoter/pygreppy.svg?branch=master)](https://travis-ci.org/skvoter/pygreppy) [![PyPI](https://img.shields.io/pypi/v/pygreppy.svg)](https://pypi.python.org/pypi/pygreppy) [![PyPI](https://img.shields.io/pypi/status/pygreppy.svg)](https://pypi.python.org/pypi/pygreppy/)
 Tool for searching in python source code files that supports context output.
+![workflow gif](https://i.imgur.com/xmurVnR.gif)
 
 Context searching is available with `ast` module and [CensoredUsername](https://github.com/CensoredUsername/)'s [fork](https://github.com/CensoredUsername/codegen) of `codegen` by Armin Ronacher.
 
@@ -10,16 +11,29 @@ Context searching is available with `ast` module and [CensoredUsername](https://
 `pip install pygreppy`
 
 ## Usage:
-```
-pygreppy [-c <depth> | cl | func] (optional) pattern file
+`pygreppy [-re | -c <depth> | cl | func] (optional) pattern file`
 
-file should be python script (better if formatted with pep8 guidelines)
+File should be python script (better if formatted with pep8 guidelines)
 
-optional arguments:
--h          show this page
--c [depth]  show context of the string.
--cl         show class containing string (ignored if no class)
--f          show function containing string (ignored if no function)
+Optional arguments:
 
-Note: only one option can be specified at a time.
-```
+ * **-h**          show usage
+ * **-c** [depth]  show context of the string.
+
+ * **-cl**         show class containing string (ignored if no class)
+
+ * **-f**          show function containing string (ignored if no function)
+
+ * **-re**         search pattern is regexp
+
+Note: only one option (except -re) can be specified at a time.
+
+**Example**: `pygreppy -re -f 'myfunction_\d{1}' mynumberedfunctions.py`
+This will show all the function named or containing string matching this regexp
+
+## Contibuting
+If you wish to contribute - you're welcome!
+
+There are some issues where help is needed or appreciated.
+
+Feature requests are also prefered to be done through the github issues.
