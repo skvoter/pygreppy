@@ -22,7 +22,8 @@ optional arguments:
 -f          show function containing string (ignored if no function)
 
 -re         pattern is regexp
-Note: only one option can be specified at a time.
+
+Note: only one option (except -re)  can be specified at a time.
 ''')
 
 
@@ -85,6 +86,8 @@ class Args:
         self.args = self.parseargs(args)
 
     def parseargs(self, args):
+        if len(args) == 0:
+            return 1
         for arg in args:
             arg = args[0]
             if arg == '-re':

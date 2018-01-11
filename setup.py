@@ -7,12 +7,12 @@ def readme():
 
 
 setup(name='pygreppy',
-      version='0.1.4',
+      version='1.0.0',
       description='Tool for searching in python source code',
       python_requires='>=3',
       long_description=readme(),
       classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Text Processing :: Filters',

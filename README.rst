@@ -33,4 +33,6 @@ Usage:
     -cl         show class containing string (ignored if no class)
     -f          show function containing string (ignored if no function)
 
+    -re         pattern is a regular expression
+
     Note: only one option can be specified at a time.
