@@ -11,7 +11,7 @@ Context searching is available with `ast` module and [CensoredUsername](https://
 `pip install pygreppy`
 
 ## Usage:
-`pygreppy [-re | -c <depth> | cl | func] (optional) pattern file`
+`pygreppy [-re | -c <depth> | -cl | -f | -h] (optional) pattern file`
 
 File should be python script (better if formatted with pep8 guidelines)
 
