@@ -30,6 +30,7 @@ Optional arguments:
 Note: only one option (except -re) can be specified at a time.
 
 **Example**: `pygreppy -re -f 'myfunction_\d{1}' mynumberedfunctions.py`
+
 This will show all the function named or containing string matching this regexp
 
 ## Contibuting
