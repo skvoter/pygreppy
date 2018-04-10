@@ -1,4 +1,5 @@
-# pygreppy [![Build Status](https://travis-ci.org/skvoter/pygreppy.svg?branch=master)](https://travis-ci.org/skvoter/pygreppy) [![PyPI](https://img.shields.io/pypi/v/pygreppy.svg)](https://pypi.python.org/pypi/pygreppy) [![PyPI](https://img.shields.io/pypi/status/pygreppy.svg)](https://pypi.python.org/pypi/pygreppy/)
+# pygreppy [![Build Status](https://travis-ci.org/skvoter/pygreppy.svg?branch=master)](https://travis-ci.org/skvoter/pygreppy) [![PyPI version](https://badge.fury.io/py/pygreppy.svg)](https://badge.fury.io/py/pygreppy)
+
 Tool for searching in python source code files that supports context output.
 ![workflow gif](https://i.imgur.com/xmurVnR.gif)
 
