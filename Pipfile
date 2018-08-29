@@ -8,9 +8,6 @@ name = "pypi"
 [packages]
 
 "flake8" = ">=3.5.0"
-mccabe = ">=0.6.1"
-pycodestyle = ">=2.3.1"
-pyflakes = ">=1.6.0"
 Pygments = ">=2.2.0"
 
 
@@ -20,4 +17,4 @@ Pygments = ">=2.2.0"
 
 [requires]
 
-python_version = "3.6"
+python_version = "3.7"
